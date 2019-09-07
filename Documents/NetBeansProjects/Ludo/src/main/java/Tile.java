@@ -12,7 +12,9 @@ public class Tile {
     
 }
 class Snake extends Tile{
-    
+    public void shake(int [] ){
+       System.out.println(">> Hiss...! I am a Snake, you go back"+  +"tiles!") 
+    }
     
 }
 class Vulture extends Tile{
