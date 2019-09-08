@@ -33,7 +33,7 @@ public class Game {
         for(int k=0;k<4;k++){
             int x=number_tiles[k];
             while(x>0){
-                randomno=r.nextInt(tracks);
+                randomno=r.nextInt(tracks-1);
                 if (patharray[randomno]==0){
                     patharray[randomno]=k+1;
                     x--;
@@ -41,11 +41,11 @@ public class Game {
         }           
         }
         //printing path
-//        for(int ria=0;ria<tracks;ria++){
-//            System.out.print(patharray[ria]+" ");
-//        }
+        for(int ria=0;ria<tracks;ria++){
+            System.out.print(patharray[ria]+" ");
+        }
         
-//       int white=tracks-(number_tiles[0]+number_tiles[1]+number_tiles[2]+number_tiles[3]);
+       int white=tracks-(number_tiles[0]+number_tiles[1]+number_tiles[2]+number_tiles[3]);
        
         
         System.out.println(">>Setting up the race track...\n" +
@@ -63,41 +63,56 @@ public class Game {
         Sc.nextLine();
         Sc.nextLine();
         System.out.println(">>Game Started ======================>");
-        gamestart(player_name,patharray);
+        gamestart(player_name,patharray,tracks,score_tiles);
 
     
     
     }
-    public static void gamestart(String player_name,int [] patharray){
-       int a=Die.roll();
+    public static void gamestart(String player_name,int [] patharray,int tracks,int [] score_tiles){
+       ArrayList <Tile> tilepath=new ArrayList<Tile>();
+        int a=Die.roll();
        while(a!=6){
            System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name+" rolled "+ a+" at Tile-1, OOPs you need 6 to start");
            a=Die.roll();
        }
        System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name +" rolled 6  at Tile-1. You are out of the cage! You get a free roll");
        
-       playgame(player_name,patharray);
+       playgame(player_name,patharray,tracks,tilepath,score_tiles) ;
+       count(tilepath);
 
     }
-    public static void playgame(String player_name,int [] patharray){
-        
+    public static void playgame(String player_name,int [] patharray,int tracks,ArrayList<Tile> tilepath,int [] score_tiles){
+        if(tileno==tracks){
+            System.out.println(player_name+" wins the race at "+roll_count+" rolls");
+            return;
+        }
         int a=Die.roll();
+        
+        System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name+" rolled "+ a+" at Tile"+tileno +",landed on Tile-"+(tileno+a)); 
         tileno+=a;
-        System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name+" rolled "+ a+" at Tile-1,landed on Tile-"+tileno); 
+        if(tileno<=0){
+            tileno=1;
+        }
+        else if(tileno>tracks){
+            tileno-=a;
+        }
+        
         Tile obj;
-        if(patharray[tileno]==1){
+        
+        if(patharray[tileno-1]==1){
             //snake
             obj=new Snake();
+            
         }
-        else if(patharray[tileno]==2){
+        else if(patharray[tileno-1]==2){
             //vulture
             obj=new Vulture();
         }
-        else if(patharray[tileno]==3){
+        else if(patharray[tileno-1]==3){
              //cricket
              obj=new Cricket();
         }
-        else if(patharray[tileno]==4){
+        else if(patharray[tileno-1]==4){
             //trampoline
             obj=new Trampoline();
         }
@@ -105,8 +120,57 @@ public class Game {
             //white
             obj=new White();
         }
+        try{
+           obj.shake(obj,score_tiles,tracks); 
+        }
+        catch(SnakeBiteException e){
+            System.out.println("Exception occured "+e.getMessage());
+        }
+        catch(VultureBiteException e){
+            System.out.println("Exception occured "+e.getMessage());
+        }
+        catch(CricketBiteException e){
+            System.out.println("Exception occured "+e.getMessage());
+        }
+        catch(TrampolineBiteException e){
+            System.out.println("Exception occured "+e.getMessage());
+        }
+        tilepath.add(obj);          //inserting tile object at index tieno-1 
+        System.out.println(player_name+ " moved to  Tile - "+tileno);
+        
+        playgame(player_name,patharray,tracks,tilepath,score_tiles);
     }
-    
+   public static void count(ArrayList<Tile> tilepath){
+       int snake=0;
+       int vulture=0;
+       int cricket=0;
+       int trampoline=0;
+
+       for(int i=0;i<tilepath.size();i++){
+           if(tilepath.get(i) instanceof Snake){
+               snake++;
+//           System.out.println("found a snake");
+            }
+           else if(tilepath.get(i) instanceof Vulture){
+               vulture++;
+//               System.out.println("found a vulture");
+           }
+           else if(tilepath.get(i) instanceof Cricket){
+               cricket++;
+//               System.out.println("found a cricket");
+           }
+           
+           else if(tilepath.get(i) instanceof Trampoline){
+               trampoline++;
+//               System.out.println("found a Trampoline");
+           }
+       }
+       System.out.println("Total snake bites "+snake);
+       System.out.println("Total vulture bites "+vulture);
+       System.out.println("Total cricket bites "+cricket);
+       System.out.println("Total trampoline bites "+trampoline);
+
+   } 
 }
 class Die{
     
