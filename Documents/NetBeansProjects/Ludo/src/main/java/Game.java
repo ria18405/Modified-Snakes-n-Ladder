@@ -17,7 +17,15 @@ public class Game {
         
         Scanner Sc=new Scanner(System.in);
         System.out.print(">>Enter total number of tiles on the race track (length)\n" );
-        int tracks=Sc.nextInt();
+        int tracks=4;
+        try{
+            tracks=Sc.nextInt();
+        }
+        catch(InputMismatchException e){
+            System.out.println("Please enter an integer");
+            return;
+        }
+        
         int [] number_tiles=new int[4];
         int [] score_tiles=new int[4];
         int [] patharray=new int[tracks];
@@ -56,39 +64,72 @@ public class Game {
     
         System.out.println(">>Enter the Player Name");
         String player_name=Sc.next();
-        System.out.println(">>Starting the game with "+player_name +" at Tile-1\n" +
-            ">>Control transferred to Computer for rolling the Dice for "+player_name+"\n" +
+        Player newplayer=new Player(player_name);
+        
+        System.out.println(">>Starting the game with "+Player.player +" at Tile-1\n" +
+            ">>Control transferred to Computer for rolling the Dice for "+Player.player+"\n" +
             ">>Hit enter to start the game");
-    
+//    try{
         Sc.nextLine();
         Sc.nextLine();
+//        String space=Sc.nextLine();
+//        if(space.equals(null)){
+//            System.out.println("huguig");
+//        }
+//    }
+//    catch(InputMismatchException e){
+        System.out.println("Press ENTER");
+//        return;
+//    }
         System.out.println(">>Game Started ======================>");
-        gamestart(player_name,patharray,tracks,score_tiles);
+        gamestart(patharray,tracks,score_tiles);
 
     
     
     }
-    public static void gamestart(String player_name,int [] patharray,int tracks,int [] score_tiles){
+    public static void gamestart(int [] patharray,int tracks,int [] score_tiles){
        ArrayList <Tile> tilepath=new ArrayList<Tile>();
         int a=Die.roll();
        while(a!=6){
-           System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name+" rolled "+ a+" at Tile-1, OOPs you need 6 to start");
+           System.out.println(">>[Roll- "+roll_count+ "]: "+ Player.player+" rolled "+ a+" at Tile-1, OOPs you need 6 to start");
            a=Die.roll();
        }
-       System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name +" rolled 6  at Tile-1. You are out of the cage! You get a free roll");
+       System.out.println(">>[Roll- "+roll_count+ "]: "+ Player.player +" rolled 6  at Tile-1. You are out of the cage! You get a free roll");
        
-       playgame(player_name,patharray,tracks,tilepath,score_tiles) ;
+       playgame(patharray,tracks,tilepath,score_tiles) ;
        count(tilepath);
 
     }
-    public static void playgame(String player_name,int [] patharray,int tracks,ArrayList<Tile> tilepath,int [] score_tiles){
-        if(tileno==tracks){
-            System.out.println(player_name+" wins the race at "+roll_count+" rolls");
-            return;
+    public static void playgame(int [] patharray,int tracks,ArrayList<Tile> tilepath,int [] score_tiles){
+//        if(tileno==tracks){
+//            throw new WinnerException(player_name+" wins the race at "+roll_count+" rolls");
+//            
+//            System.out.println(player_name+" wins the race at "+roll_count+" rolls");
+//            return;
+//        }
+        try{
+            if(tileno==tracks){
+//                System.out.println("yo");
+              throw new WinnerException(Player.player+" wins the race at "+roll_count+" rolls");
+
+            }
+        }
+        catch(WinnerException e){
+            System.out.println(e.getMessage());
+             return;
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            System.out.println("Index Out Of Bounds Exception of Array");
+        }
+        catch (NullPointerException e){
+            System.out.println("Null Pointer Exception");
+        }
+        catch(Exception e){
+            System.out.println("There is an exception raised");
         }
         int a=Die.roll();
         
-        System.out.println(">>[Roll- "+roll_count+ "]: "+ player_name+" rolled "+ a+" at Tile"+tileno +",landed on Tile-"+(tileno+a)); 
+        System.out.println(">>[Roll- "+roll_count+ "]: "+ Player.player+" rolled "+ a+" at Tile"+tileno +",landed on Tile-"+(tileno+a)); 
         tileno+=a;
         if(tileno<=0){
             tileno=1;
@@ -136,9 +177,9 @@ public class Game {
             System.out.println("Exception occured "+e.getMessage());
         }
         tilepath.add(obj);          //inserting tile object at index tieno-1 
-        System.out.println(player_name+ " moved to  Tile - "+tileno);
+        System.out.println(Player.player+ " moved to  Tile - "+tileno);
         
-        playgame(player_name,patharray,tracks,tilepath,score_tiles);
+        playgame(patharray,tracks,tilepath,score_tiles);
     }
    public static void count(ArrayList<Tile> tilepath){
        int snake=0;

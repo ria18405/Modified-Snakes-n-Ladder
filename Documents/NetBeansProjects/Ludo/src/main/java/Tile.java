@@ -34,14 +34,25 @@ class Tile {
          if(Game.tileno>tracks){
             Game.tileno-=score_tiles[3];
         }
+         try{
+            if(Game.tileno==tracks){
+//                System.out.println("yo");
+              throw new WinnerException(Player.player+" wins the race at "+Game.roll_count+" rolls");
+
+            }
+        }
+        catch(WinnerException e){
+            System.out.println(e.getMessage());
+             return;
+        }
       throw new TrampolineBiteException("PingPong! I am a Trampoline, you advance "+score_tiles[3] +" tiles!");
     }
     else{
         System.out.println("I am a White tile!");
     }
-      if(Game.tileno<=0){
-            Game.tileno=1;
-        }
+    if(Game.tileno<=0){
+        Game.tileno=1;
+    }
 //        else if(Game.tileno>tracks){
 //            tileno-=a;
 //        }
@@ -110,4 +121,16 @@ class TrampolineBiteException extends Exception{
         super(message);
 
     }
-}   
+} 
+class WinnerException extends Exception{
+    public WinnerException(String message){
+        super (message);
+    }
+}
+
+class Player{
+    static String player;
+    public Player(String name){
+        this.player=name;
+    }
+}
